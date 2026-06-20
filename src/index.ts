@@ -1,129 +1,120 @@
-import { input, Separator } from "@inquirer/prompts";
-import { select } from "@inquirer/prompts";
+import { input, select, Separator } from "@inquirer/prompts";
+import chalk from "chalk";
+import boxen from "boxen";
+import ora from "ora";
+import Table from "cli-table3";
 import { Positions } from "./types.js";
 
+type PlayerStats = {
+  position: Positions;
+  goalsScored: number;
+  assists: number;
+  shots: number;
+  shotsOnTarget: number;
+  keeperSaves: number;
+  tacklesWon: number;
+  keyPasses: number;
+  teamGoals: number;
+};
+
+const validateNumber = (value: string) => {
+  const parsed = Number.parseInt(value, 10);
+  if (Number.isNaN(parsed) || parsed < 0) {
+    return "Please enter a valid non-negative whole number";
+  }
+  return true;
+};
+
+const askNumber = async (message: string): Promise<number> => {
+  const value = await input({
+    message,
+    validate: validateNumber,
+  });
+  return Number.parseInt(value, 10);
+};
+
+const positionLabel: Record<Positions, string> = {
+  GK: "Goalkeeper",
+  CB: "Defender",
+  CM: "Midfielder",
+  ST: "Attacker",
+};
+
+console.clear();
+console.log(
+  boxen(
+    `${chalk.bold.cyan("⚽ Player Ratings CLI")}`,
+    {
+      padding: { top: 0, right: 1, bottom: 0, left: 1 },
+      borderStyle: "round",
+      borderColor: "cyan",
+    }
+  )
+);
+
 const position: Positions = await select({
-  message: "Select the position played",
+  message: chalk.bold("Select the position played"),
   choices: [
-    {
-      name: "Goalkeeper (GK)",
-      value: "GK",
-    },
-    {
-      name: "Defender (CB)",
-      value: "CB",
-    },
-    {
-      name: "Midfielder (CM)",
-      value: "CM",
-    },
-    {
-      name: "Attacker (ST)",
-      value: "ST",
-    },
+    { name: "Goalkeeper (GK)", value: "GK" },
+    { name: "Defender (CB)", value: "CB" },
+    { name: "Midfielder (CM)", value: "CM" },
+    { name: "Attacker (ST)", value: "ST" },
   ],
 });
 
-const goalsScored = await input({
-  message: "Enter the number of goals scored:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
-});
+console.log(chalk.blue("\nMatch contribution"));
 
-const assists = await input({
-  message: "Enter the number of assists:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
-});
+const goalsScored = await askNumber("Goals scored:");
+const assists = await askNumber("Assists:");
+const shots = await askNumber("Shots:");
+const shotsOnTarget = await askNumber("Shots on target:");
 
-const shots = await input({
-  message: "Enter the number of shots:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
-});
-
-const shotsOnTarget = await input({
-  message: "Enter the number of shots on target:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
-});
-
-let keeperSaves;
+let keeperSaves = 0;
 if (position === "GK") {
-  keeperSaves = await input({
-    message: "Enter the number of keeper saves:",
-    validate: (input) => {
-      const parsed = parseInt(input, 10);
-      if (isNaN(parsed) || parsed < 0) {
-        return "Please enter a valid non-negative number";
-      }
-      return true;
-    },
-  });
+  console.log(chalk.blue("\nGoalkeeper stats"));
+  keeperSaves = await askNumber("Keeper saves:");
 }
 
-const tacklesWon = await input({
-  message: "Enter the number of tackles won:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
+console.log(chalk.blue("\nDefensive + build-up"));
+const tacklesWon = await askNumber("Tackles won:");
+const keyPasses = await askNumber("Key passes:");
+const teamGoals = await askNumber("Total team goals:");
+
+const stats: PlayerStats = {
+  position,
+  goalsScored,
+  assists,
+  shots,
+  shotsOnTarget,
+  keeperSaves,
+  tacklesWon,
+  keyPasses,
+  teamGoals,
+};
+
+
+const table = new Table({
+  head: [chalk.cyan("Stat"), chalk.cyan("Value")],
+  style: { head: [], border: [] },
 });
 
-const keyPasses = await input({
-  message: "Enter the number of key passes:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
-});
+table.push(
+  ["Position", `${positionLabel[stats.position]} (${stats.position})`],
+  ["Goals Scored", stats.goalsScored],
+  ["Assists", stats.assists],
+  ["Shots", stats.shots],
+  ["Shots on Target", stats.shotsOnTarget],
+  ...(stats.position === "GK" ? [["Keeper Saves", stats.keeperSaves]] : []),
+  ["Tackles Won", stats.tacklesWon],
+  ["Key Passes", stats.keyPasses],
+  ["Team Goals", stats.teamGoals]
+);
 
-const teamGoals = await input({
-  message: "Enter the total number of team goals:",
-  validate: (input) => {
-    const parsed = parseInt(input, 10);
-    if (isNaN(parsed) || parsed < 0) {
-      return "Please enter a valid non-negative number";
-    }
-    return true;
-  },
-});
-
-console.log("\nPlayer Statistics:");
-console.log(`Position: ${position}`);
-console.log(`Goals Scored: ${goalsScored}`);
-console.log(`Assists: ${assists}`);
-console.log(`Shots: ${shots}`);
-console.log(`Shots on Target: ${shotsOnTarget}`);
-if (position === "GK") {
-  console.log(`Keeper Saves: ${keeperSaves}`);
-}
-console.log(`Tackles Won: ${tacklesWon}`);
-console.log(`Key Passes: ${keyPasses}`);
-console.log(`Team Goals: ${teamGoals}`);
+console.log("\n");
+console.log(
+  boxen(`${chalk.bold("Stats")}\n\n${table.toString()}`, {
+    padding: 1,
+    borderStyle: "round",
+    borderColor: "green",
+  })
+);
