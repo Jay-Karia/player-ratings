@@ -5,12 +5,14 @@ This algorithm is made for personal use only which I will be using on my games.
 
 It will also generate a stat card and also image of the player with rating on it.
 
+## Demo
+
 ## Positions
 
 1. GK (Goalkeeper)
 2. CB (Defender)
 3. CM (Midfielder)
-4. ST (Attacker)
+4. ST (Attacker)****
 
 ## Match Stats
 
