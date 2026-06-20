@@ -40,6 +40,7 @@ It will also generate a stat card and also image of the player with rating on it
 
 | Stat | More value | Less value |
 | --- | --- | --- |
+| Keeper Saves | high affect | No affect |
 | Goals Scored | Slightly high affect | Slightly lower affect |
 | Assists | high affect | Medium affect |
 | Shots | Medium affect | Medium affect |
@@ -51,6 +52,7 @@ It will also generate a stat card and also image of the player with rating on it
 
 | Stat | More value | Less value |
 | --- | --- | --- |
+| Keeper Saves | high affect | No affect |
 | Goals Scored | High affect | High affect |
 | Assists | High affect | High affect |
 | Shots | Medium affect | Medium affect |
@@ -62,9 +64,18 @@ It will also generate a stat card and also image of the player with rating on it
 
 | Stat | More value | Less value |
 | --- | --- | --- |
+| Keeper Saves | high affect | No affect |
 | Goals Scored | High affect | High affect |
 | Assists | Higher affect | High affect |
 | Shots | High affect | High affect |
 | On Target Shots | High affect | High affect |
 | Tackles Won | High affect | No affect |
 | Key Passes | Slightly more affect | Medium affect |
+
+## Alternate Possibility
+
+Might have played multiple positions in a match.
+
+## Tip
+
+**`assets/player.jpg`** is the default image used for player image generation, which is ignored in the repository. You can replace it with your own image to generate player images with ratings.
